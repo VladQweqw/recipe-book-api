@@ -14,6 +14,8 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 async function post_recipe(req, res) {    
+    console.log(req.body, 'a');
+    
     try {
         const recipe = await Recipe.create(req.body);
         console.log(recipe);

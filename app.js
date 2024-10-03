@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const express = require('express')
 const recipeRouter = require('./routes/recipeRoutes');
-
+const body_parser = require('body-parser')
 const cors = require('cors')
 const dbURI = "mongodb+srv://vladpoienariu:admin123@lists.5vhezvm.mongodb.net/recipes-book?retryWrites=true&w=majority&appName=lists";
 
@@ -44,6 +44,7 @@ const corsOptions = {
 app.use(cors(corsOptions))
 app.use(express.static('public'))
 app.use(express.json())
+app.use(body_parser)
 
 // image static 
 app.use('public/recipe_images', express.static('recipe_images'));
