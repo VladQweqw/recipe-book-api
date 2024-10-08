@@ -36,18 +36,17 @@ const corsOptions = {
     optionsSuccessStatus: 200,
     'Access-Control-Allow-Credentials': true,
     'Access-Control-Allow-Headers': true,
-    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS, PUT, PATCH, DELETE'
+    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS, PUT, PATCH, DELETE',
+    'Content-Type': 'multipart/form-data',
 }
 
 
 
 app.use(cors(corsOptions))
-app.use(express.static('public'))
+app.use('/public/recipe_images', express.static('public/recipe_images'));
 app.use(express.json())
-app.use(body_parser)
+app.use(body_parser.json())
 
-// image static 
-app.use('public/recipe_images', express.static('recipe_images'));
 
 app.use("/", recipeRouter);
 

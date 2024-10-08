@@ -1,25 +1,24 @@
 const Recipe = require("../models/recipeModel");
-const multer = require('multer');
-
-
-// storage imge config
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, "/public/recipe_images");
-    },
-    filename: (req, res, cb) => {
-        cb(null, file.fieldname + "_" + Date.now() + path.extname(file.originalname));
-    }
-})
-const upload = multer({ storage: storage });
+const fs = require('fs')
+const path = require('path')
 
 async function post_recipe(req, res) {    
-    console.log(req.body, 'a');
-    
-    try {
-        const recipe = await Recipe.create(req.body);
-        console.log(recipe);
+    req.body.stepImages = [];
+    const base_url = 'http://192.168.1.69:3003/public/recipe_images/';
+    try {    
         
+        let img_path = `${base_url}${req.files.thumbnailImage[0].filename}`;
+        req.body.thumbnailImage = img_path;
+        
+        if(req.files.stepImages) {
+            req.files.stepImages.forEach((image) => {
+                req.body.stepImages.push(
+                    `${base_url}${image.filename}`
+                );
+            })
+        }
+
+        const recipe = await Recipe.create(req.body);
         recipe.save();
     }
     catch(err) {
@@ -34,7 +33,7 @@ async function post_recipe(req, res) {
     }
 
     return res.status(201).json({
-        error: 'Recipe succesfully created!'
+        detail: 'Recipe succesfully created!'
     })
 }
 
@@ -74,6 +73,23 @@ function get_recipes(req, res) {
             error: err
         })
     })
+}
+
+function get_latest_recipe(req, res) {
+    
+    try {
+        Recipe.findOne().sort({_id: -1}).exec()
+        .then((respnse) => {
+            res.status(200).json({
+                detail: respnse
+            })
+        })
+    }
+    catch(err) {
+        res.status(500).json({
+            error: "No data probably"
+        })
+    }
 }
 
 function get_individual_recipe(req, res) {
@@ -131,18 +147,69 @@ async function get_daily_recipe(req, res) {
 function delete_recipe(req, res) {
     const recipe_id = req.query.id;
 
-    Recipe.findByIdAndDelete(recipe_id)
-    .then((result) => {
-        return res.status(200).json({
-            detail: "Recipe deleted"
+    Recipe.findById(recipe_id).then((result) => {
+        if(!result) {
+            return res.status(400).json({
+                detail: `Invalid recipe id`
+            })
+        }
+        
+        const unlinkedPromises = [];
+        result?.stepImages.push(result.thumbnailImage)
+        if(result?.stepImages) {
+            result.stepImages.forEach((img_path) => {
+                if(!img_path) return;
+                
+                const file_name = img_path.split('/').pop()
+                const file_path = path.join(__dirname, "..", 'public', 'recipe_images', file_name);
+                console.log(file_path);
+                
+                unlinkedPromises.push(new Promise((resolve) => {
+                    fs.unlink(file_path, (err) => {                    
+                        if(err) {
+                            console.log(`Image ${file_name} coult not be deleted`);    
+                            resolve(false)                    
+                        }else {                            
+                            resolve(true)
+                        }
+                    })
+                }))
+            })
+        }
+
+        Promise.all(unlinkedPromises).then((results) => {
+            const failedCount = results.filter(result => !result).length;
+            
+            if(failedCount > 0) {
+                return res.status(500).json({
+                    error: `Could not delete ${failedCount} images`
+                })
+            }else {
+                result.deleteOne().then(() => {
+                    return res.status(200).json({
+                        detail: "Recipe deleted"
+                    });
+                }).catch((err) => {
+                    return res.status(500).json({
+                        detail: "Recipe could not be deleted: " + err.message
+                    });
+                });
+            }
         })
+        .catch((err) => {
+            return res.status(500).json({
+                detail: `Error while deleting images ${err}` 
+            });
+        })
+
     })
     .catch((err) => {
         return res.status(400).json({
-            error: "Invalid id"
+            error: "Invalid id probably " + err 
         })
     })
 
+    
 }
 
 function put_recipe(req, res) {
@@ -167,5 +234,6 @@ module.exports = {
     get_daily_recipe,
     post_recipe,
     delete_recipe,
-    put_recipe
+    put_recipe,
+    get_latest_recipe
 }

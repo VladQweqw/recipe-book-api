@@ -1,28 +1,6 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
-const stepSchema = new mongoose.Schema({
-    text: {
-        type: String,
-        required: true,
-    },
-    image: {
-        type: String,
-        required: false,
-    }
-})
-
-const ingredientSchema = new mongoose.Schema({
-    name: {
-        type: String,
-        required: true,
-    },
-    checked: {
-        type: Boolean,
-        default: false,
-    }
-})
-
 const RecipeSchema = new Schema({
     title: {
         type: String,
@@ -49,8 +27,17 @@ const RecipeSchema = new Schema({
         type: String,
         required: [true, 'Please choose an image']
     },
-    ingredients: [ingredientSchema],
-    steps: [stepSchema],
+    ingredients: [{
+        type: String,
+        required: [true, ""]
+    }],
+    stepTexts: [{
+        type: String,
+        required: [true, "Please add a text"]
+    }],
+    stepImages: [{
+        type: String,
+    }],
     difficulty: {
         type: String,
         required: true,
