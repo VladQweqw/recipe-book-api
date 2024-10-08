@@ -38,8 +38,9 @@ const corsOptions = {
 };
 
 
-
+app.options('*', cors(corsOptions));
 app.use(cors(corsOptions))
+
 app.use('/public/recipe_images', express.static('public/recipe_images'));
 app.use(express.json())
 app.use(body_parser.json())
