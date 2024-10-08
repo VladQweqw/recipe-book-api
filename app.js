@@ -20,26 +20,25 @@ mongoose.connect(dbURI)
     console.log(`Error while connecting to DB: ${err}`);
 })
 
+const allowedOrigins = [
+    'http://localhost:3000', 
+    'http://localhost:5173', 
+    'http://localhost:3003', 
+    'http://192.168.1.69:3000',
+    'http://192.168.1.69:3003',
+    'http://192.168.1.68:3000',
+    'http://192.168.1.68:3003',
+    domain + ':3000',  // Assuming 'domain' is defined somewhere in your code
+    domain + ":3003",
+];
+
 const corsOptions = {
-    origin: [
-        'http://localhost:3000', 
-        'http://localhost:5173', 
-        'http://localhost:3003', 
-        'http://192.168.1.69:3000',
-        'http://192.168.1.69:3003',
-        'http://192.168.1.68:3000',
-        'http://192.168.1.68:3003',
-        domain + ':3000',
-        domain + ":3003",
-    ],
-    credentials: true,
-    optionsSuccessStatus: 200,
-    'Access-Control-Allow-Credentials': true,
-    'Access-Control-Allow-Headers': true,
-    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS, PUT, PATCH, DELETE',
-    'Content-Type': 'multipart/form-data',
-    'Access-Control-Allow-Origin': "*",
-}
+    origin: allowedOrigins,
+    credentials: true, // Allow credentials (cookies, authorization headers, etc.)
+    optionsSuccessStatus: 200, // For legacy browser support
+    methods: 'GET, POST, OPTIONS, PUT, PATCH, DELETE', // Allowed methods
+    allowedHeaders: ['Content-Type', 'Authorization'], // Specify allowed headers
+};
 
 
 
