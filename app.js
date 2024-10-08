@@ -38,6 +38,7 @@ const corsOptions = {
     'Access-Control-Allow-Headers': true,
     'Access-Control-Allow-Methods': 'GET, POST, OPTIONS, PUT, PATCH, DELETE',
     'Content-Type': 'multipart/form-data',
+    'Access-Control-Allow-Origin': "*",
 }
 
 
