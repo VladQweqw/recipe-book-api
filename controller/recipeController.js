@@ -4,7 +4,7 @@ const path = require('path')
 
 async function post_recipe(req, res) {    
     req.body.stepImages = [];
-    const base_url = 'http://192.168.1.69:3003/public/recipe_images/';
+    const base_url = 'http://192.168.1.68:3003/public/recipe_images/';
     try {    
         
         let img_path = `${base_url}${req.files.thumbnailImage[0].filename}`;
