@@ -21,15 +21,12 @@ mongoose.connect(dbURI)
 })
 
 const allowedOrigins = [
-    'http://localhost:3000', 
     'http://localhost:5173', 
     'http://localhost:3003', 
-    'http://192.168.1.69:3000',
-    'http://192.168.1.69:3003',
-    'http://192.168.1.68:3000',
+    'http://192.168.1.68:5173',
     'http://192.168.1.68:3003',
-    domain + ':3000',  // Assuming 'domain' is defined somewhere in your code
-    domain + ":3003",
+    'http://192.168.1.68:3003',
+    domain + ":5173",
 ];
 
 const corsOptions = {
