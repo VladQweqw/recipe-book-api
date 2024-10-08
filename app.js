@@ -7,7 +7,7 @@ const dbURI = "mongodb+srv://vladpoienariu:admin123@lists.5vhezvm.mongodb.net/re
 
 const app = express()
 const PORT = 3003
-const domain = '192.168.1.69'
+const domain = 'localhost'
 
 mongoose.connect(dbURI)
 .then((result) => {
